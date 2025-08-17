@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import FilterSection from '@/components/home/FilterSection';
-import Hero from '@/components/home/Hero';
-import PropertiesSection from '@/components/home/PropertiesSection';
-import ServicesSection from '@/components/home/ServicesSection';
-import TestimonialsSection from '@/components/home/TestimonialsSection';
+import React, { useState } from "react";
+import Nav from "@/components/home/Nav";
+import Hero from "@/components/home/Hero";
+import FilterSection from "@/components/home/FilterSection";
+import PropertiesSection from "@/components/home/PropertiesSection";
+import ServicesSection from "@/components/home/ServicesSection";
+import TestimonialsSection from "@/components/home/TestimonialsSection";
 
 const Page = () => {
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState("All");
 
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
@@ -16,6 +17,7 @@ const Page = () => {
 
   return (
     <div>
+      <Nav />
       <Hero />
       <FilterSection onFilterChange={handleFilterChange} />
       <PropertiesSection activeFilter={activeFilter} />
