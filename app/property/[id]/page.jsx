@@ -6,22 +6,22 @@ import dbConnect from "@/lib/dbConnect";
 import { notFound } from "next/navigation";
 import PropertyCard from "@/components/ui/PropertyCard";
 
-// Fetch property from DB
 async function getProperty(id) {
   await dbConnect();
   const property = await Property.findById(id).lean();
   if (!property) return null;
 
-  property._id = property._id.toString(); // convert ObjectId to string
+  property._id = property._id.toString();
   return property;
 }
 
-// ✅ Generate metadata for Open Graph (photo preview in share)
 export async function generateMetadata({ params }) {
-  const property = await getProperty(params.id);
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
+  const property = await getProperty(id);
+
   if (!property) return { title: "Property Not Found" };
 
-  // Ensure absolute URL for image
   const imageUrl = property.images?.[0]
     ? `${process.env.NEXT_PUBLIC_BASE_URL}${property.images[0]}`
     : `${process.env.NEXT_PUBLIC_BASE_URL}/placeholder.jpg`;
@@ -53,7 +53,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function PropertyDetails({ params }) {
-  const property = await getProperty(params.id);
+  const resolvedParams = await params;
+  const property = await getProperty(resolvedParams.id);
 
   if (!property) {
     notFound();
@@ -61,7 +62,6 @@ export default async function PropertyDetails({ params }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Back Button */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
@@ -74,7 +74,6 @@ export default async function PropertyDetails({ params }) {
         </div>
       </div>
 
-      {/* Page content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <img
@@ -125,7 +124,6 @@ export default async function PropertyDetails({ params }) {
         </div>
       </div>
 
-      {/* Similar Properties (for now show same property for demo) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-2xl font-bold mb-6">Similar Properties</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

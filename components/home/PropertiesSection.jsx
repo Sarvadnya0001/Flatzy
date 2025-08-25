@@ -40,7 +40,8 @@ const PropertiesSection = () => {
   const filteredProperties = properties
     .filter((property) => {
       // filter by type
-      if (filters.type !== "All" && property.type !== filters.type) return false;
+      if (filters.type !== "All" && property.type !== filters.type)
+        return false;
 
       // filter by location
       if (
@@ -87,8 +88,7 @@ const PropertiesSection = () => {
   }
 
   return (
-    <div className="bg-gray-50 py-16">
-      {/* Filter Section */}
+    <div id="properties" className="bg-gray-50">
       <FilterSection onFilterChange={setFilters} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">

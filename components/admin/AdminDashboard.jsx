@@ -21,20 +21,6 @@ export default function AdminDashboard() {
     { key: "analytics", label: "Analytics", icon: BarChart3 },
   ];
 
-  // Fetch properties
-  useEffect(() => {
-    if (activeTab === "properties") {
-      setLoading(true);
-      fetch("/api/properties")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) setProperties(data.data);
-        })
-        .catch((err) => console.error("Error fetching properties:", err))
-        .finally(() => setLoading(false));
-    }
-  }, [activeTab]);
-
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 font-sans">
       {/* Mobile top bar */}

@@ -34,11 +34,10 @@ export default function UserList() {
 
   return (
     <div className="space-y-8">
-      {/* Admins Section */}
+      <h2 className="text-2xl font-bold mb-6 border-b pb-2">
+        Registered Users
+      </h2>
       <section>
-        <h2 className="text-2xl font-bold mb-6 border-b pb-2">
-              Registered Users
-            </h2>
         <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <ShieldCheck className="text-blue-600" /> Admins
         </h3>
@@ -64,7 +63,6 @@ export default function UserList() {
         )}
       </section>
 
-      {/* All Users Section */}
       <section>
         <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <User className="text-gray-600" /> All Users

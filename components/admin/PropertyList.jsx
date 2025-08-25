@@ -6,7 +6,6 @@ export default function PropertyList() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch properties
   useEffect(() => {
     setLoading(true);
     fetch("/api/properties")
