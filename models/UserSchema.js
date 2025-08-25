@@ -5,15 +5,16 @@ mongoose.Promise = global.Promise;
 
 const userSchema = new Schema(
   {
-    name: String,
-    email: String,
-    password: String,
+    name: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
     role: { type: String, enum: ["admin", "user"], default: "user" },
-    photo: String,
+    photo: { type: String },
   },
   { timestamps: true }
 );
 
+// prevent model overwrite in dev/hot-reload
 delete mongoose.connection.models['User'];
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

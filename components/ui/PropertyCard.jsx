@@ -14,23 +14,21 @@ const PropertyCard = ({ property }) => {
   };
 
   const handleShareClick = async () => {
-    const propertyUrl = `${window.location.origin}/property/${property._id}`;
     const shareData = {
       title: property.title,
-      text: `Check out this property: ${property.title}`,
-      url: propertyUrl,
+      text: property.description || "Check out this property!",
+      url: `${window.location.origin}/property/${property._id}`,
     };
 
-    try {
-      if (navigator.share) {
+    if (navigator.share) {
+      try {
         await navigator.share(shareData);
-      } else {
-        // Fallback: copy link to clipboard
-        await navigator.clipboard.writeText(propertyUrl);
-        alert("Property link copied to clipboard!");
+      } catch (err) {
+        console.error("Share failed:", err.message);
       }
-    } catch (err) {
-      console.error("Error sharing", err);
+    } else {
+      navigator.clipboard.writeText(shareData.url);
+      alert("Link copied to clipboard!");
     }
   };
 
@@ -43,31 +41,6 @@ const PropertyCard = ({ property }) => {
           alt={property.title}
           className="w-full h-56 object-cover rounded-t-2xl transition-transform duration-500 group-hover:scale-105"
         />
-
-        {/* Type badge */}
-        {property.type && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-sky-500 to-sky-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-md">
-            {property.type}
-          </div>
-        )}
-
-        {/* Rent badge */}
-        {property.rent && (
-          <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-sky-700 px-3 py-1 rounded-full text-sm font-semibold shadow-md">
-            ₹{Number(property.rent).toLocaleString()}/month
-          </div>
-        )}
-
-        {/* Share button on image */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            handleShareClick();
-          }}
-          className="absolute top-3 right-3 bg-white/90 hover:bg-white text-gray-700 p-2 rounded-full shadow-md transition-colors"
-        >
-          <Share2 size={20} />
-        </button>
       </Link>
 
       {/* Content */}
@@ -80,30 +53,19 @@ const PropertyCard = ({ property }) => {
 
         {/* Details */}
         <div className="space-y-2 mb-4 text-gray-600 text-sm">
-          {property.furnishing && (
-            <p>
-              <span className="font-medium">Furnishing:</span>{" "}
-              {property.furnishing}
-            </p>
-          )}
-          {property.preference && (
-            <p>
-              <span className="font-medium">Preference:</span>{" "}
-              {property.preference}
-            </p>
+          {property.location && (
+            <div className="flex items-center">
+              <MapPin size={16} className="mr-1 text-rose-500" />
+              <span>{property.location}</span>
+            </div>
           )}
           {property.available_from && (
             <div className="flex items-center">
               <Calendar size={16} className="mr-1 text-sky-500" />
               <span>
-                Available from {new Date(property.available_from).toLocaleDateString()}
+                Available from{" "}
+                {new Date(property.available_from).toLocaleDateString()}
               </span>
-            </div>
-          )}
-          {property.location && (
-            <div className="flex items-center">
-              <MapPin size={16} className="mr-1 text-rose-500" />
-              <span>{property.location}</span>
             </div>
           )}
         </div>
@@ -124,6 +86,14 @@ const PropertyCard = ({ property }) => {
           >
             <MessageCircle size={16} />
             <span>Inquire</span>
+          </button>
+
+          <button
+            onClick={handleShareClick}
+            className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-medium flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg"
+          >
+            <Share2 size={16} />
+            <span>Share</span>
           </button>
         </div>
       </div>

@@ -11,6 +11,8 @@ export default async function AdminPage() {
   }
 
   if (session.user.role !== "admin") {
+    console.log(session.user);
+    
     redirect("/");
   }
 

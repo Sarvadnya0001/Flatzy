@@ -8,19 +8,30 @@ const UserForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const value = e.target.value;
-    const name = e.target.name;
-    setFormData((prevState) => ({
-      ...prevState,
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setPreview(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -30,33 +41,27 @@ const UserForm = () => {
     try {
       let photoUrl = "";
 
-      // Upload to Cloudinary
+      // Upload file to /api/upload
       if (file) {
-        const formDataFile = new FormData();
-        formDataFile.append("file", file);
-        formDataFile.append(
-          "upload_preset",
-          process.env.NEXT_PUBLIC_CLOUDINARY_PRESET
-        );
+        const uploadData = new FormData();
+        uploadData.append("files", file);
 
-        const uploadRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-          {
-            method: "POST",
-            body: formDataFile,
-          }
-        );
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadData,
+        });
 
-        const uploadData = await uploadRes.json();
-        if (uploadData.secure_url) {
-          photoUrl = uploadData.secure_url;
+        const uploadJson = await uploadRes.json();
+        if (uploadJson.success) {
+          photoUrl = uploadJson.urls[0]; // first uploaded file
         } else {
-          toast.error("Image upload failed");
+          toast.error("❌ Image upload failed");
+          setLoading(false);
           return;
         }
       }
 
-      // Send user data
+      // Create user
       const res = await fetch("/api/Users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,15 +70,15 @@ const UserForm = () => {
 
       const response = await res.json();
 
-      if (!res.ok) {
+      if (!res.ok || !response.success) {
         toast.error(response.message || "Something went wrong");
       } else {
-        toast.success("User created successfully 🎉");
+        toast.success("✅ User created successfully!");
         router.refresh();
         router.push("/");
       }
     } catch (err) {
-      toast.error("Server error");
+      toast.error("❌ Server error");
     } finally {
       setLoading(false);
     }
@@ -89,6 +94,7 @@ const UserForm = () => {
           Create New User
         </h1>
 
+        {/* Full Name */}
         <div>
           <label className="block text-gray-600 font-medium mb-1">
             Full Name
@@ -104,6 +110,7 @@ const UserForm = () => {
           />
         </div>
 
+        {/* Email */}
         <div>
           <label className="block text-gray-600 font-medium mb-1">Email</label>
           <input
@@ -117,6 +124,7 @@ const UserForm = () => {
           />
         </div>
 
+        {/* Password */}
         <div>
           <label className="block text-gray-600 font-medium mb-1">
             Password
@@ -132,6 +140,7 @@ const UserForm = () => {
           />
         </div>
 
+        {/* Role */}
         <div>
           <label className="block text-gray-600 font-medium mb-1">Role</label>
           <select
@@ -148,6 +157,7 @@ const UserForm = () => {
           </select>
         </div>
 
+        {/* Profile Photo */}
         <div>
           <label className="block text-gray-600 font-medium mb-1">
             Profile Photo
@@ -158,6 +168,16 @@ const UserForm = () => {
             onChange={handleFileChange}
             className="w-full text-gray-600"
           />
+
+          {preview && (
+            <div className="mt-3 flex justify-center">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-28 h-28 object-cover rounded-full border"
+              />
+            </div>
+          )}
         </div>
 
         <button

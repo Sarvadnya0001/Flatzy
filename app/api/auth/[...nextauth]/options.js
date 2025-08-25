@@ -40,13 +40,9 @@ export const options = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {
-          label: "email:",
-          type: "text",
-          placeholder: "your-email",
-        },
+        email: { label: "Email:", type: "text", placeholder: "your-email" },
         password: {
-          label: "password:",
+          label: "Password:",
           type: "password",
           placeholder: "your-password",
         },
@@ -57,35 +53,42 @@ export const options = {
             .lean()
             .exec();
 
-          if (foundUser) {
-            console.log("User Exists");
-            const match = await bcrypt.compare(
-              credentials.password,
-              foundUser.password
-            );
+          if (!foundUser) return null;
 
-            if (match) {
-              console.log("Good Pass");
-              delete foundUser.password;
+          const match = await bcrypt.compare(
+            credentials.password,
+            foundUser.password
+          );
 
-              foundUser["role"] = "Unverified Email";
-              return foundUser;
-            }
-          }
+          if (!match) return null;
+
+          console.log("✅ User authenticated:", foundUser.email);
+
+          // remove password before returning
+          const { password, ...userWithoutPass } = foundUser;
+
+          return {
+            ...userWithoutPass,
+            role: foundUser.role || "user",
+          };
         } catch (error) {
-          console.log(error);
+          console.error("❌ Auth error:", error);
+          return null;
         }
-        return null;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = user.role;
+      if (user) {
+        token.role = user.role;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (session?.user) session.user.role = token.role;
+      if (session?.user) {
+        session.user.role = token.role;
+      }
       return session;
     },
   },

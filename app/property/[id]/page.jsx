@@ -1,26 +1,62 @@
 import React from "react";
 import { ArrowLeft, MapPin } from "lucide-react";
 import Link from "next/link";
-import PropertyCard from "@/components/ui/PropertyCard";
 import Property from "@/models/PropertySchema";
+import dbConnect from "@/lib/dbConnect";
+import { notFound } from "next/navigation";
+import PropertyCard from "@/components/ui/PropertyCard";
 
+// Fetch property from DB
 async function getProperty(id) {
+  await dbConnect();
   const property = await Property.findById(id).lean();
   if (!property) return null;
 
   property._id = property._id.toString(); // convert ObjectId to string
-  property.createdAt = property.createdAt?.toISOString();
-  property.updatedAt = property.updatedAt?.toISOString();
-
   return property;
 }
 
+// ✅ Generate metadata for Open Graph (photo preview in share)
+export async function generateMetadata({ params }) {
+  const property = await getProperty(params.id);
+  if (!property) return { title: "Property Not Found" };
+
+  // Ensure absolute URL for image
+  const imageUrl = property.images?.[0]
+    ? `${process.env.NEXT_PUBLIC_BASE_URL}${property.images[0]}`
+    : `${process.env.NEXT_PUBLIC_BASE_URL}/placeholder.jpg`;
+
+  return {
+    title: property.title,
+    description: property.description || "Check out this amazing property!",
+    openGraph: {
+      title: property.title,
+      description: property.description || "Check out this amazing property!",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: property.title,
+        },
+      ],
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/property/${property._id}`,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: property.title,
+      description: property.description || "Check out this amazing property!",
+      images: [imageUrl],
+    },
+  };
+}
+
 export default async function PropertyDetails({ params }) {
-  const { id } = await params;
-  const property = await getProperty(id);
+  const property = await getProperty(params.id);
 
   if (!property) {
-    return <div className="p-6 text-red-500">Property not found</div>;
+    notFound();
   }
 
   return (
@@ -64,26 +100,32 @@ export default async function PropertyDetails({ params }) {
         {/* Sidebar */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Info</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Quick Info
+            </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span>ID:</span> <span className="font-medium">{property._id}</span>
+                <span>ID:</span>{" "}
+                <span className="font-medium">{property._id}</span>
               </div>
               <div className="flex justify-between">
-                <span>Type:</span> <span className="font-medium">{property.type}</span>
+                <span>Type:</span>{" "}
+                <span className="font-medium">{property.type}</span>
               </div>
               <div className="flex justify-between">
-                <span>Furnishing:</span> <span className="font-medium">{property.furnishing}</span>
+                <span>Furnishing:</span>{" "}
+                <span className="font-medium">{property.furnishing}</span>
               </div>
               <div className="flex justify-between">
-                <span>Preference:</span> <span className="font-medium">{property.preference}</span>
+                <span>Preference:</span>{" "}
+                <span className="font-medium">{property.preference}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Similar Properties */}
+      {/* Similar Properties (for now show same property for demo) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-2xl font-bold mb-6">Similar Properties</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
