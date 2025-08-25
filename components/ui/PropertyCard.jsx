@@ -78,7 +78,6 @@ const PropertyCard = ({ property }) => {
               </span>
             </div>
           )}
-
           {property?.location && (
             <div className="flex items-center">
               <MapPin size={16} className="mr-1 text-rose-500" />
