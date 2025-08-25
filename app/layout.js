@@ -1,5 +1,5 @@
 import AuthProvider from "../middleware/AuthProvider";
-import Nav from "../components/home/Nav";
+import Nav from "../components/(components)/Nav";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 

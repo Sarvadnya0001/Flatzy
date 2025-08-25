@@ -62,7 +62,7 @@ const UserForm = () => {
       }
 
       // Create user
-      const res = await fetch("/api/Users", {
+      const res = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, photo: photoUrl }),
