@@ -6,13 +6,13 @@ import AdminDashboard from "@/components/admin/AdminDashboard";
 export default async function AdminPage() {
   const session = await getServerSession(options);
 
-  // if (!session) {
-  //   redirect("/api/auth/signin"); 
-  // }
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
 
-  // if (session.user.role !== "admin") {
-  //   redirect("/");
-  // }
+  if (session.user.role !== "admin") {
+    redirect("/");
+  }
 
   return <AdminDashboard />;
 }

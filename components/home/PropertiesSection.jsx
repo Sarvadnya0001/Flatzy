@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import PropertyCard from "./PropertyCard";
+import PropertyCard from "../ui/PropertyCard";
 import toast from "react-hot-toast";
 import FilterSection from "./FilterSection";
 
