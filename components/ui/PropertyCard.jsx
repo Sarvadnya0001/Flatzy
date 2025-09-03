@@ -3,18 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import {
-  Calendar,
-  MapPin,
-  MessageCircle,
-  Images,
-  Share2,
-} from "lucide-react";
+import { Calendar, MapPin, MessageCircle, Images, Share2 } from "lucide-react";
+import { number } from "@/data";
 
 const PropertyCard = ({ property }) => {
   const handleWhatsAppClick = () => {
-    const message = `Hi, I would like to inquire about the property: ${property.title} at ${property.location}`;
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(
+    const message = `Hi, I would like to enquire about the property: ${property.title} at ${property.location}`;
+    const whatsappUrl = `https://wa.me/${number}?text=${encodeURIComponent(
       message
     )}`;
     window.open(whatsappUrl, "_blank");
@@ -123,7 +118,7 @@ const PropertyCard = ({ property }) => {
             className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
           >
             <MessageCircle size={16} />
-            <span>Inquire</span>
+            <span>Enquire</span>
           </button>
 
           <button

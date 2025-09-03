@@ -13,6 +13,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import BackButton from "@/components/ui/BackButton";
+import { number } from "@/data";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -52,9 +53,7 @@ const PropertyDetails = () => {
 
   const handleWhatsAppClick = () => {
     const message = `Hi, I'm interested in the property: ${property.title} at ${property.location}`;
-    const url = `https://wa.me/919876543210?text=${encodeURIComponent(
-      message
-    )}`;
+    const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
     toast.success("Opening WhatsApp...");
     window.open(url, "_blank");
   };
@@ -227,7 +226,7 @@ const PropertyDetails = () => {
               className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2 shadow-md"
             >
               <MessageCircle size={20} />
-              Inquire on WhatsApp
+              WhatsApp Enquiry
             </button>
 
             <Link
