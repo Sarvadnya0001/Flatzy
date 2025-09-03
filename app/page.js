@@ -8,6 +8,7 @@ import Navbar from "@/components/home/Header";
 import Footer from "@/components/home/Footer";
 import AdminButton from "@/components/ui/AdminButton";
 import { Toaster } from "react-hot-toast";
+import CategoriesSection from "@/components/home/CategoriesSection";
 
 const Page = () => {
   return (
@@ -17,6 +18,7 @@ const Page = () => {
       <AdminButton />
       <Hero />
       <PropertiesSection />
+      {/* <CategoriesSection /> */}
       <ServicesSection />
       <Footer />
     </div>

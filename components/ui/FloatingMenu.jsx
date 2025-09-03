@@ -129,7 +129,7 @@ const FloatingMenu = () => {
                 key={item.label}
                 ref={(el) => (linkRefs.current[i] = el)}
                 href={item.href}
-                className="flex items-center text-black gap-3 w-full px-4 py-2.5 opacity-0 -translate-y-3 hover:bg-white/20 transition border-b border-black/20 last:border-b-0"
+                className="flex items-center text-black gap-3 w-full px-4 py-2.5 opacity-0 -translate-y-3 hover:bg-white/20 rounded-2xl transition"
                 onClick={() => {
                   collapseMenu();
                   setIsExpanded(false);
@@ -143,7 +143,6 @@ const FloatingMenu = () => {
         </div>
       </div>
 
-      {/* Toggle Button */}
       <button
         ref={buttonRef}
         onClick={handleToggle}
