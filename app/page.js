@@ -6,18 +6,18 @@ import PropertiesSection from "@/components/home/PropertiesSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import Navbar from "@/components/home/Header";
 import Footer from "@/components/home/Footer";
-import FloatingMenu from "@/components/ui/FloatingMenu";
 import AdminButton from "@/components/ui/AdminButton";
+import { Toaster } from "react-hot-toast";
 
 const Page = () => {
   return (
     <div>
+      <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
       <AdminButton />
       <Hero />
       <PropertiesSection />
       <ServicesSection />
-      <FloatingMenu />
       <Footer />
     </div>
   );

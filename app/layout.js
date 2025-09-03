@@ -2,6 +2,7 @@ import AuthProvider from "../middleware/AuthProvider";
 import Nav from "../components/(components)/Nav";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import FloatingMenu from "@/components/ui/FloatingMenu";
 
 export const metadata = {
   title: "Flatzy",
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
           {/* <Nav /> */}
           <div>{children}</div>
           <Toaster position="top-right" reverseOrder={false} />
+          <FloatingMenu />
         </body>
       </AuthProvider>
     </html>

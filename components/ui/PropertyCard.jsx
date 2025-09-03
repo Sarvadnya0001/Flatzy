@@ -2,7 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { Calendar, MapPin, MessageCircle, Images, Share2 } from "lucide-react";
+import toast from "react-hot-toast";
+import {
+  Calendar,
+  MapPin,
+  MessageCircle,
+  Images,
+  Share2,
+} from "lucide-react";
 
 const PropertyCard = ({ property }) => {
   const handleWhatsAppClick = () => {
@@ -24,32 +31,63 @@ const PropertyCard = ({ property }) => {
       try {
         await navigator.share(shareData);
       } catch (err) {
-        console.error("Share failed:", err.message);
+        toast.error("Share failed. Please try again.");
       }
     } else {
       navigator.clipboard.writeText(shareData.url);
-      alert("Link copied to clipboard!");
+      toast.success("🔗 Link copied to clipboard!");
     }
   };
 
   return (
-    <div className="group bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-      {/* Image */}
+    <div className="group bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+      {/* Image with overlays */}
       <Link href={`/property/${property._id}`} className="block relative">
         <img
           src={property.images?.[0] || "/placeholder.jpg"}
           alt={property.title}
           className="w-full h-56 object-cover rounded-t-2xl transition-transform duration-500 group-hover:scale-105"
         />
+
+        {/* Price Badge */}
+        <div className="absolute top-3 left-3 bg-sky-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+          ₹{property.rent.toLocaleString()}/mo
+        </div>
+
+        {/* Image count badge */}
+        {property.images?.length > 1 && (
+          <div className="absolute bottom-3 right-3 bg-black/60 text-white px-2 py-1 rounded-md text-xs">
+            +{property.images.length}
+          </div>
+        )}
       </Link>
 
       {/* Content */}
       <div className="p-5">
         <Link href={`/property/${property._id}`}>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1 hover:text-sky-600 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1 hover:text-sky-600 transition-colors">
             {property.title}
           </h3>
         </Link>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {property.type && (
+            <span className="bg-sky-100 text-sky-700 text-xs px-2 py-1 rounded-full">
+              {property.type}
+            </span>
+          )}
+          {property.furnishing && (
+            <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full">
+              {property.furnishing}
+            </span>
+          )}
+          {property.preference && (
+            <span className="bg-rose-100 text-rose-700 text-xs px-2 py-1 rounded-full">
+              {property.preference}
+            </span>
+          )}
+        </div>
 
         {/* Details */}
         <div className="space-y-2 mb-4 text-gray-600 text-sm">
@@ -70,11 +108,11 @@ const PropertyCard = ({ property }) => {
           )}
         </div>
 
-        {/* Buttons */}
-        <div className="flex space-x-3">
+        {/* Actions */}
+        <div className="flex items-center justify-between gap-2">
           <Link
             href={`/property/${property._id}`}
-            className="flex-1 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl font-medium flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg"
+            className="flex-1 bg-sky-500 hover:bg-sky-600 text-white px-3 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
           >
             <Images size={16} />
             <span>Photos</span>
@@ -82,7 +120,7 @@ const PropertyCard = ({ property }) => {
 
           <button
             onClick={handleWhatsAppClick}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-medium flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg"
+            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
           >
             <MessageCircle size={16} />
             <span>Inquire</span>
@@ -90,7 +128,7 @@ const PropertyCard = ({ property }) => {
 
           <button
             onClick={handleShareClick}
-            className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-medium flex items-center justify-center space-x-2 transition-all shadow-md hover:shadow-lg"
+            className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
           >
             <Share2 size={16} />
             <span>Share</span>
