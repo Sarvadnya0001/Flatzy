@@ -37,6 +37,7 @@ export default function AddPropertyForm() {
     const form = new FormData(e.target);
     let imageUrls = [];
 
+    // upload images
     if (selectedImages.length > 0) {
       const uploadData = new FormData();
       selectedImages.forEach((img) => uploadData.append("files", img.file));
@@ -62,6 +63,7 @@ export default function AddPropertyForm() {
       furnishing: form.get("furnishing"),
       preference: form.get("preference"),
       available_from: form.get("available_from"),
+      isAvailable: form.get("isAvailable") === "true", // ✅ radio button value
       rent: Number(form.get("rent")),
       location: form.get("location"),
       description: form.get("description"),
@@ -151,6 +153,8 @@ export default function AddPropertyForm() {
               name="preference"
               className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             >
+              <option>House</option>
+              <option>PG</option>
               <option>Family</option>
               <option>Bachelor</option>
               <option>Anyone</option>
@@ -166,6 +170,33 @@ export default function AddPropertyForm() {
               type="date"
               className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Availability
+          </label>
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="isAvailable"
+                value="true"
+                defaultChecked
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+              />
+              <span>Available</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="isAvailable"
+                value="false"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+              />
+              <span>Not Available</span>
+            </label>
           </div>
         </div>
 

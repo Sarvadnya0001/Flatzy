@@ -10,6 +10,7 @@ const propertySchema = new Schema(
     furnishing: { type: String },
     preference: { type: String },
     available_from: { type: String },
+    isAvailable: { type: Boolean, default: true },
     rent: { type: Number, required: true },
     location: { type: String, required: true },
     images: [{ type: String }],
