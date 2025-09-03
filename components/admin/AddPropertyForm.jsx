@@ -2,22 +2,44 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Upload } from "lucide-react";
+import { LandPlot, Upload, X } from "lucide-react";
 
 export default function AddPropertyForm() {
   const [loading, setLoading] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    if (files.length > 0) {
+      const newImages = files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+
+      setSelectedImages((prev) => [...prev, ...newImages]);
+      toast.success(`${files.length} file(s) selected`);
+    }
+  };
+
+  const removeImage = (index) => {
+    setSelectedImages((prev) => {
+      const updated = [...prev];
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
 
   const handleAddProperty = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     const form = new FormData(e.target);
-    const files = form.getAll("images");
     let imageUrls = [];
 
-    if (files.length > 0 && files[0].size > 0) {
+    if (selectedImages.length > 0) {
       const uploadData = new FormData();
-      files.forEach((f) => uploadData.append("files", f));
+      selectedImages.forEach((img) => uploadData.append("files", img.file));
 
       const uploadRes = await fetch("/api/upload", {
         method: "POST",
@@ -58,6 +80,7 @@ export default function AddPropertyForm() {
     if (data.success) {
       toast.success("✅ Property added successfully!");
       e.target.reset();
+      setSelectedImages([]);
     } else {
       toast.error("❌ Failed: " + data.error);
     }
@@ -65,8 +88,8 @@ export default function AddPropertyForm() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
-        🏠 Add New Property
+      <h2 className="text-3xl font-bold mb-6 flex flex-row items-center gap-2 text-gray-800">
+        <LandPlot /> Add New Property
       </h2>
 
       <form
@@ -83,11 +106,11 @@ export default function AddPropertyForm() {
             type="text"
             placeholder="Luxury Apartment"
             required
-            className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
           />
         </div>
 
-        {/* Type + Furnishing in 2 columns */}
+        {/* Type + Furnishing */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -95,12 +118,11 @@ export default function AddPropertyForm() {
             </label>
             <select
               name="type"
-              className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             >
               <option>Flat</option>
-              <option>Villa</option>
-              <option>Independent House</option>
-              <option>Studio</option>
+              <option>Hostel</option>
+              <option>Room</option>
             </select>
           </div>
 
@@ -110,7 +132,7 @@ export default function AddPropertyForm() {
             </label>
             <select
               name="furnishing"
-              className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             >
               <option>Furnished</option>
               <option>Semi-Furnished</option>
@@ -127,7 +149,7 @@ export default function AddPropertyForm() {
             </label>
             <select
               name="preference"
-              className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             >
               <option>Family</option>
               <option>Bachelor</option>
@@ -142,7 +164,7 @@ export default function AddPropertyForm() {
             <input
               name="available_from"
               type="date"
-              className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
         </div>
@@ -156,9 +178,9 @@ export default function AddPropertyForm() {
             <input
               name="rent"
               type="number"
-              placeholder="25000"
+              placeholder="5000"
               required
-              className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
 
@@ -169,9 +191,9 @@ export default function AddPropertyForm() {
             <input
               name="location"
               type="text"
-              placeholder="Bangalore, India"
+              placeholder="Nagpur"
               required
-              className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
             />
           </div>
         </div>
@@ -193,11 +215,7 @@ export default function AddPropertyForm() {
               accept="image/*"
               className="hidden"
               id="fileUpload"
-              onChange={(e) => {
-                if (e.target.files.length > 0) {
-                  toast.success(`${e.target.files.length} file(s) selected`);
-                }
-              }}
+              onChange={handleImageChange}
             />
             <label
               htmlFor="fileUpload"
@@ -206,6 +224,28 @@ export default function AddPropertyForm() {
               Choose Files
             </label>
           </div>
+
+          {/* Preview Selected Images */}
+          {selectedImages.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {selectedImages.map((img, idx) => (
+                <div key={idx} className="relative group">
+                  <img
+                    src={img.preview}
+                    alt={`preview-${idx}`}
+                    className="w-full h-28 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(idx)}
+                    className="absolute top-1 right-1 bg-black bg-opacity-60 text-white rounded-full p-1 hover:bg-red-600 transition"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Description */}
@@ -215,9 +255,9 @@ export default function AddPropertyForm() {
           </label>
           <textarea
             name="description"
-            placeholder="Spacious 2BHK with sea view..."
+            placeholder="Description about the property..."
             rows={4}
-            className="w-full border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none"
           ></textarea>
         </div>
 

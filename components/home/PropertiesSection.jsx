@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import PropertyCard from "../ui/PropertyCard";
 import toast from "react-hot-toast";
 import FilterSection from "./FilterSection";
+import Loader from "../../components/ui/Loader";
 
 const PropertiesSection = () => {
   const [properties, setProperties] = useState([]);
@@ -75,16 +76,7 @@ const PropertiesSection = () => {
     });
 
   if (loading) {
-    return (
-      <div className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading properties...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
